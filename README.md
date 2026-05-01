@@ -80,8 +80,8 @@ A native iOS application built with **SwiftUI** that integrates with a **Moodle-
 
 ### Prerequisites
 
-- **Xcode 16+** (tested with Xcode 16.x)
-- **iOS 17.0+** deployment target
+- **Xcode 26.4+** (tested with Xcode 26.4)
+- **iOS 26.0+** deployment target
 - **macOS Sonoma** or later
 - No CocoaPods, SPM, or Carthage needed
 
@@ -428,13 +428,13 @@ Or in **Xcode**:
 | -------------------- | ------------------------------ |
 | **Language**         | Swift 5.9+                     |
 | **UI Framework**     | SwiftUI                        |
-| **Minimum iOS**      | 17.0                           |
+| **Minimum iOS**      | 26.0                           |
 | **Architecture**     | MVVM                           |
 | **Networking**       | URLSession + async/await       |
 | **State Management** | @Observable + ViewState\<T\>   |
 | **Logging**          | os.Logger + print (Debug only) |
 | **Dependencies**     | None (pure Apple frameworks)   |
-| **Build System**     | Xcode 16+ / xcodebuild         |
+| **Build System**     | Xcode 26.4+ / xcodebuild       |
 
 ---
 
