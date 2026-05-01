@@ -115,26 +115,26 @@ open iOSAssignment.xcodeproj
 ### MVVM (Model-View-ViewModel)
 
 ```
-┌──────────────────────────────────────────────────────┐
+┌───────────────────────────────────────────────────────┐
 │                       Views                           │
 │  SwiftUI declarative UI layer                         │
-│  SplashView → LoginView → MainTabView                │
+│  SplashView → LoginView → MainTabView                 │
 │  CoursesView / CourseDetailView / GradesView          │
-├──────────────────────────────────────────────────────┤
+├───────────────────────────────────────────────────────┤
 │                    ViewModels                         │
-│  @Observable classes with ViewState<T>               │
+│  @Observable classes with ViewState<T>                │
 │  LoginViewModel / CoursesViewModel                    │
 │  CourseDetailViewModel / GradesViewModel              │
-├──────────────────────────────────────────────────────┤
+├───────────────────────────────────────────────────────┤
 │                     Services                          │
-│  APIService  — URLSession + async/await networking   │
+│  APIService  — URLSession + async/await networking    │
 │  AuthManager — Authentication state singleton         │
-│  AppLogger   — Debug logging via os.Logger + print   │
-├──────────────────────────────────────────────────────┤
+│  AppLogger   — Debug logging via os.Logger + print    │
+├───────────────────────────────────────────────────────┤
 │                      Models                           │
 │  Decodable structs mapping to JSON responses          │
 │  AuthToken / Course / CourseSection / GradeItem       │
-└──────────────────────────────────────────────────────┘
+└───────────────────────────────────────────────────────┘
 ```
 
 ### State Management
