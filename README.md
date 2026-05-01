@@ -174,7 +174,8 @@ iOSAssignment/
 │
 ├── Services/
 │   ├── APIService.swift               # Centralized networking (URLSession)
-│   └── AuthManager.swift              # Auth state management (token, userId)
+│   ├── AuthManager.swift              # Auth state management (token, userId)
+│   └── KeychainService.swift          # Secure token storage in Keychain
 │
 ├── ViewModels/
 │   ├── LoginViewModel.swift           # Login form state & validation
