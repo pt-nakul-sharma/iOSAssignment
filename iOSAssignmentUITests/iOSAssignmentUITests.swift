@@ -9,33 +9,105 @@ import XCTest
 
 final class iOSAssignmentUITests: XCTestCase {
 
+    private var app: XCUIApplication!
+
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app = XCUIApplication()
+        app.launchArguments = ["--uitesting-reset-state"]
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        app = nil
+    }
+
+    // MARK: - Helper
+
+    @MainActor
+    private func launchAndLoginWithDemoToken() {
+        app.launch()
+
+        let demoTokenButton = app.buttons["Use Demo Token"]
+        XCTAssertTrue(demoTokenButton.waitForExistence(timeout: 5), "Demo token button should appear after splash screen")
+        demoTokenButton.tap()
+
+        let coursesTitle = app.staticTexts["My Courses"]
+        XCTAssertTrue(coursesTitle.waitForExistence(timeout: 10), "Courses view should appear after demo login")
+    }
+
+    // MARK: - Tests
+
+    @MainActor
+    func testDemoTokenLoginShowsCourses() throws {
+        launchAndLoginWithDemoToken()
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+    func testTabSwitching() throws {
+        launchAndLoginWithDemoToken()
+
+        app.tabBars.buttons["Grades"].tap()
+        XCTAssertTrue(app.staticTexts["Grades"].waitForExistence(timeout: 5), "Grades tab should be visible")
+
+        app.tabBars.buttons["Profile"].tap()
+        XCTAssertTrue(app.staticTexts["Profile"].waitForExistence(timeout: 5), "Profile tab should be visible")
+    }
+
+    @MainActor
+    func testLogoutFlow() throws {
+        launchAndLoginWithDemoToken()
+
+        app.tabBars.buttons["Profile"].tap()
+        XCTAssertTrue(app.staticTexts["Profile"].waitForExistence(timeout: 5))
+
+        let signOutButton = app.buttons["Sign Out"]
+        XCTAssertTrue(signOutButton.waitForExistence(timeout: 5))
+        signOutButton.tap()
+
+        let demoTokenButton = app.buttons["Use Demo Token"]
+        XCTAssertTrue(demoTokenButton.waitForExistence(timeout: 5), "Login view should reappear after logout")
+    }
+
+    @MainActor
+    func testNavigateToCourseDetail() throws {
+        launchAndLoginWithDemoToken()
+
+        let firstCourse = app.scrollViews.firstMatch.buttons.firstMatch
+        guard firstCourse.waitForExistence(timeout: 15) else {
+            throw XCTSkip("No enrolled courses available for UI test navigation")
+        }
+
+        firstCourse.tap()
+
+        let backButton = app.buttons["My Courses"]
+        XCTAssertTrue(backButton.waitForExistence(timeout: 5), "Back button to Courses should appear after navigating to course detail")
+    }
+
+    @MainActor
+    func testLoginPersistsAcrossAppRestarts() throws {
+        // First launch with reset state: log in
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        let demoTokenButton = app.buttons["Use Demo Token"]
+        XCTAssertTrue(demoTokenButton.waitForExistence(timeout: 5))
+        demoTokenButton.tap()
+
+        let coursesTitle = app.staticTexts["My Courses"]
+        XCTAssertTrue(coursesTitle.waitForExistence(timeout: 10))
+
+        // Terminate and relaunch without reset argument
+        app.terminate()
+
+        let relaunchedApp = XCUIApplication()
+        relaunchedApp.launch()
+
+        // Should land directly on courses (still authenticated)
+        XCTAssertTrue(relaunchedApp.staticTexts["My Courses"].waitForExistence(timeout: 10),
+                      "User should remain logged in after app restart")
     }
 
     @MainActor
     func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
         measure(metrics: [XCTApplicationLaunchMetric()]) {
             XCUIApplication().launch()
         }
